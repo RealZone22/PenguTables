@@ -42,6 +42,7 @@ class Column implements Wireable
                     $actions[] = $action->getAction();
                 }
             }
+
             return implode('', $actions);
         });
 
