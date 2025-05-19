@@ -24,16 +24,31 @@ class Column implements Wireable
 
     private ?string $formatSerialized = null;
 
-    private ?string $labelCallbackSerialized = null;
-
     private ?Closure $format = null;
-
-    private string|null|Closure $labelCallback = null;
 
     private function __construct(string $label, ?string $key = null)
     {
         $this->label = $label;
         $this->key = $key;
+    }
+
+    public static function actions(string $label, Closure $callback): static
+    {
+        $instance = new static($label);
+        $actions = [];
+        foreach ($callback() as $action) {
+            if ($action instanceof Action) {
+                $actions[] = $action->getAction();
+            }
+        }
+
+        $instance->format(function () use ($actions) {
+            return implode('', $actions);
+        });
+
+        $instance->html();
+
+        return $instance;
     }
 
     public static function make(string $label, ?string $key = null): static
@@ -59,14 +74,6 @@ class Column implements Wireable
     {
         $this->format = $callback;
         $this->formatSerialized = serialize(new SerializableClosure($callback));
-
-        return $this;
-    }
-
-    public function label(Closure $callback): static
-    {
-        $this->labelCallback = $callback;
-        $this->labelCallbackSerialized = serialize(new SerializableClosure($callback));
 
         return $this;
     }
@@ -101,39 +108,28 @@ class Column implements Wireable
 
     public function getValue($model): string
     {
-        if ($this->labelCallbackSerialized) {
-            $callback = unserialize($this->labelCallbackSerialized)->getClosure();
+        if ($this->formatSerialized) {
+            $callback = unserialize($this->formatSerialized)->getClosure();
+            $value = $callback(data_get($model, $this->key), $model);
 
-            return $callback($model);
+            if (!$this->html) {
+                $value = e($value);
+            }
+
+            return $value;
         }
 
-        if (! $this->key) {
+        if (!$this->key) {
             return '';
         }
 
         $value = data_get($model, $this->key);
 
-        if ($this->formatSerialized) {
-            $callback = unserialize($this->formatSerialized)->getClosure();
-            $value = $callback($value, $model);
-        }
-
-        if (! $this->html) {
+        if (!$this->html) {
             $value = e($value);
         }
 
         return $value;
-    }
-
-    public function getLabel($model = null): string
-    {
-        if ($this->labelCallbackSerialized && $model) {
-            $callback = unserialize($this->labelCallbackSerialized)->getClosure();
-
-            return $callback($model);
-        }
-
-        return $this->label;
     }
 
     public function toLivewire(): array
@@ -147,7 +143,6 @@ class Column implements Wireable
             'showInExport' => $this->showInExport,
             'html' => $this->html,
             'formatSerialized' => $this->formatSerialized,
-            'labelCallbackSerialized' => $this->labelCallbackSerialized,
         ];
     }
 
@@ -160,7 +155,6 @@ class Column implements Wireable
         $instance->showInExport = $value['showInExport'] ?? true;
         $instance->html = $value['html'];
         $instance->formatSerialized = $value['formatSerialized'];
-        $instance->labelCallbackSerialized = $value['labelCallbackSerialized'];
 
         return $instance;
     }

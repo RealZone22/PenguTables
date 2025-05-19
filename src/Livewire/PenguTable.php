@@ -71,26 +71,24 @@ abstract class PenguTable extends Component
     protected function applySearch(Builder $query): Builder
     {
         if ($this->options->searchable && $this->search) {
-            $searchTerm = strtolower($this->search);
+            $searchTerms = array_filter(explode(' ', strtolower(trim($this->search))));
 
-            $records = $query->get();
-            $matchingRecords = $records->filter(function ($record) use ($searchTerm) {
-                foreach ($this->columns as $column) {
-                    if ($column->searchable) {
-                        $formattedValue = strtolower($column->getValue($record));
-                        if (str_contains($formattedValue, $searchTerm)) {
-                            return true;
-                        }
+            if (!empty($searchTerms)) {
+                $query->where(function (Builder $subQuery) use ($searchTerms) {
+                    $searchableColumns = collect($this->columns)
+                        ->filter(fn($column) => $column->searchable && $column->key)
+                        ->pluck('key')
+                        ->toArray();
+
+                    foreach ($searchTerms as $term) {
+                        $subQuery->where(function (Builder $termQuery) use ($term, $searchableColumns) {
+                            foreach ($searchableColumns as $column) {
+                                $termQuery->orWhere($column, 'LIKE', '%' . $term . '%');
+                            }
+                        });
                     }
-                }
-
-                return false;
-            });
-
-            $primaryKey = $query->getModel()->getKeyName();
-            $keys = $matchingRecords->pluck($primaryKey)->toArray();
-
-            return $query->whereIn($primaryKey, $keys);
+                });
+            }
         }
 
         return $query;

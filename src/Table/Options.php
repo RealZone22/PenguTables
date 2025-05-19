@@ -8,7 +8,7 @@ class Options
 
     public bool $withExport = true;
 
-    public array $exportTypes = [];
+    public array $exportTypes = [ExportTypes::CSV_ALL, ExportTypes::XLSX_ALL, ExportTypes::CSV_SELECTED, ExportTypes::XLSX_SELECTED];
 
     public bool $bulkActions = true;
 
