@@ -4,7 +4,6 @@ namespace RealZone22\PenguTables;
 
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use RealZone22\PenguTables\Commands\PenguTablesCommand;
 
 class PenguTablesServiceProvider extends PackageServiceProvider
 {

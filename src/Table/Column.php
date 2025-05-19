@@ -107,7 +107,7 @@ class Column implements Wireable
             return $callback($model);
         }
 
-        if (!$this->key) {
+        if (! $this->key) {
             return '';
         }
 
@@ -118,7 +118,7 @@ class Column implements Wireable
             $value = $callback($value, $model);
         }
 
-        if (!$this->html) {
+        if (! $this->html) {
             $value = e($value);
         }
 

@@ -24,8 +24,7 @@ class BulkAction implements Wireable
 
     public static function fromLivewire($value)
     {
-        $instance = new static($value['label'], function () {
-        });
+        $instance = new static($value['label'], function () {});
         $instance->actionSerialized = $value['actionSerialized'];
 
         return $instance;
