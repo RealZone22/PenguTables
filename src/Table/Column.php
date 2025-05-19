@@ -111,20 +111,20 @@ class Column implements Wireable
             $callback = unserialize($this->formatSerialized)->getClosure();
             $value = $callback(data_get($model, $this->key), $model);
 
-            if (!$this->html) {
+            if (! $this->html) {
                 $value = e($value);
             }
 
             return $value;
         }
 
-        if (!$this->key) {
+        if (! $this->key) {
             return '';
         }
 
         $value = data_get($model, $this->key);
 
-        if (!$this->html) {
+        if (! $this->html) {
             $value = e($value);
         }
 
