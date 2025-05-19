@@ -35,14 +35,13 @@ class Column implements Wireable
     public static function actions(string $label, Closure $callback): static
     {
         $instance = new static($label);
-        $actions = [];
-        foreach ($callback() as $action) {
-            if ($action instanceof Action) {
-                $actions[] = $action->getAction();
+        $instance->format(function ($value, $row) use ($callback) {
+            $actions = [];
+            foreach ($callback($row) as $action) {
+                if ($action instanceof Action) {
+                    $actions[] = $action->getAction();
+                }
             }
-        }
-
-        $instance->format(function () use ($actions) {
             return implode('', $actions);
         });
 
