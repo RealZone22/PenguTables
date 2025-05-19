@@ -73,17 +73,17 @@ abstract class PenguTable extends Component
         if ($this->options->searchable && $this->search) {
             $searchTerms = array_filter(explode(' ', strtolower(trim($this->search))));
 
-            if (!empty($searchTerms)) {
+            if (! empty($searchTerms)) {
                 $query->where(function (Builder $subQuery) use ($searchTerms) {
                     $searchableColumns = collect($this->columns)
-                        ->filter(fn($column) => $column->searchable && $column->key)
+                        ->filter(fn ($column) => $column->searchable && $column->key)
                         ->pluck('key')
                         ->toArray();
 
                     foreach ($searchTerms as $term) {
                         $subQuery->where(function (Builder $termQuery) use ($term, $searchableColumns) {
                             foreach ($searchableColumns as $column) {
-                                $termQuery->orWhere($column, 'LIKE', '%' . $term . '%');
+                                $termQuery->orWhere($column, 'LIKE', '%'.$term.'%');
                             }
                         });
                     }
