@@ -14,8 +14,8 @@ class TextFilter extends Filter
 
     public function defaultFilter(Builder $query, $value): void
     {
-        if (!empty($value)) {
-            $query->where($this->key, 'like', '%' . $value . '%');
+        if (! empty($value)) {
+            $query->where($this->key, 'like', '%'.$value.'%');
         }
     }
 }

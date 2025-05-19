@@ -111,7 +111,7 @@ abstract class PenguTable extends Component
     public function updatedSelectAll($value): void
     {
         if ($value) {
-            $this->selected = $this->data->pluck('id')->map(fn($id) => (string)$id)->toArray();
+            $this->selected = $this->data->pluck('id')->map(fn ($id) => (string) $id)->toArray();
         } else {
             $this->selected = [];
         }
@@ -119,8 +119,8 @@ abstract class PenguTable extends Component
 
     public function executeBulkAction(string $actionLabel): void
     {
-        $action = collect($this->bulkActions())->first(fn($action) => $action->getLabel() === $actionLabel);
-        if ($action && !empty($this->selected)) {
+        $action = collect($this->bulkActions())->first(fn ($action) => $action->getLabel() === $actionLabel);
+        if ($action && ! empty($this->selected)) {
             $rows = $this->query()->whereIn('id', $this->selected)->get();
             $action->execute($rows);
             $this->selected = [];
@@ -166,7 +166,7 @@ abstract class PenguTable extends Component
     public function getDataProperty(): LengthAwarePaginator
     {
         $query = $this->applySort($this->applyFilters($this->applySearch($this->query())));
-        $this->columns = collect($this->columns())->filter(fn($column) => !$column->hidden)->toArray();
+        $this->columns = collect($this->columns())->filter(fn ($column) => ! $column->hidden)->toArray();
 
         return $query->paginate($this->perPage);
     }
@@ -174,7 +174,7 @@ abstract class PenguTable extends Component
     public function boot(): void
     {
         $this->options = $this->setupOptions();
-        if (!isset($this->perPage) || $this->perPage <= 0) {
+        if (! isset($this->perPage) || $this->perPage <= 0) {
             $this->perPage = $this->options->perPageOptions[0];
         }
     }

@@ -20,13 +20,14 @@ trait WithExport
 
     protected function export($data, $type)
     {
-        $filename = config('pengutables.export_filename', 'export_' . now()->format('Ymd_Hi'));
-        $exportColumns = collect($this->columns())->filter(fn($column) => $column->showInExport)->values()->toArray();
+        $filename = config('pengutables.export_filename', 'export_'.now()->format('Ymd_Hi'));
+        $exportColumns = collect($this->columns())->filter(fn ($column) => $column->showInExport)->values()->toArray();
 
-        $headers = collect($exportColumns)->map(fn($column) => $column->label)->toArray();
+        $headers = collect($exportColumns)->map(fn ($column) => $column->label)->toArray();
         $rows = $data->map(function ($item) use ($exportColumns) {
             return collect($exportColumns)->map(function ($column) use ($item) {
                 $value = $column->getValue($item);
+
                 return strip_tags($value);
             })->toArray();
         })->toArray();
@@ -54,16 +55,16 @@ trait WithExport
 
         return response()->stream($callback, 200, [
             'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '.csv"',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'.csv"',
             'Pragma' => 'no-cache',
             'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
-            'Expires' => '0'
+            'Expires' => '0',
         ]);
     }
 
     protected function streamExcel($filename, $headers, $rows)
     {
-        $spreadsheet = new Spreadsheet();
+        $spreadsheet = new Spreadsheet;
         $sheet = $spreadsheet->getActiveSheet();
 
         foreach ($headers as $colIndex => $header) {
@@ -76,7 +77,7 @@ trait WithExport
             }
         }
 
-        $headerRow = $sheet->getStyle('A1:' . Coordinate::stringFromColumnIndex(count($headers)) . '1');
+        $headerRow = $sheet->getStyle('A1:'.Coordinate::stringFromColumnIndex(count($headers)).'1');
         $headerRow->getFont()->setBold(true);
 
         foreach (range(1, count($headers)) as $colIndex) {
@@ -89,10 +90,10 @@ trait WithExport
             $writer->save('php://output');
         }, 200, [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '.xlsx"',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'.xlsx"',
             'Pragma' => 'no-cache',
             'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
-            'Expires' => '0'
+            'Expires' => '0',
         ]);
     }
 }
