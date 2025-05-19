@@ -1,0 +1,7 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Report a bug
+    url: https://github.com/realzone22/PenguTables/issues?template=bug.yml
+  - name: Report a security issue
+    url: https://github.com/realzone22/PenguTables/security/policy
+    about: Learn how to notify us for sensitive bugs
