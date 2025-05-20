@@ -182,7 +182,7 @@
                             <x-table.body.item class="py-3 ps-3">
                                 <x-checkbox
                                     wire:model.live="selected"
-                                    value="{{ $item->id }}"
+                                    value="{{ (string)$item->{$options->primaryKey} }}"
                                 />
                             </x-table.body.item>
                         @endif

@@ -109,7 +109,9 @@ abstract class PenguTable extends Component
     public function updatedSelectAll($value): void
     {
         if ($value) {
-            $this->selected = $this->data->pluck('id')->map(fn ($id) => (string) $id)->toArray();
+            $this->selected = $this->data->pluck($this->options->primaryKey)
+                ->map(fn ($id) => (string) $id)
+                ->toArray();
         } else {
             $this->selected = [];
         }
@@ -119,7 +121,7 @@ abstract class PenguTable extends Component
     {
         $action = collect($this->bulkActions())->first(fn ($action) => $action->getLabel() === $actionLabel);
         if ($action && ! empty($this->selected)) {
-            $rows = $this->query()->whereIn('id', $this->selected)->get();
+            $rows = $this->query()->whereIn($this->options->primaryKey, $this->selected)->get();
             $action->execute($rows);
             $this->selected = [];
             $this->selectAll = false;

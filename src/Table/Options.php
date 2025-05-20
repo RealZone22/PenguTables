@@ -22,6 +22,8 @@ class Options
 
     public int $paginationPages = 2;
 
+    public string $primaryKey = 'id';
+
     public static function make(): static
     {
         return new static;
@@ -44,6 +46,13 @@ class Options
     public function setPerPageOptions(array $options): static
     {
         $this->perPageOptions = $options;
+
+        return $this;
+    }
+
+    public function setPrimaryKey(string $key): static
+    {
+        $this->primaryKey = $key;
 
         return $this;
     }
