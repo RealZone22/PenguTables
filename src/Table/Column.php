@@ -105,7 +105,7 @@ class Column implements Wireable
         return $this;
     }
 
-    public function getValue($model): string
+    public function getValue($model): ?string
     {
         if ($this->formatSerialized) {
             $callback = unserialize($this->formatSerialized)->getClosure();

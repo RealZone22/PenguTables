@@ -1,16 +1,21 @@
 <?php
 
 return [
-    'search_placeholder' => 'Search...',
-    'bulk_actions' => 'Bulk Actions (:count)',
-    'selected_items_text' => 'Selected <span class="font-medium">:selected</span> of <span class="font-medium">:items</span> items',
+    'search_placeholder' => 'Suche...',
+    'bulk_actions' => 'Aktionen (:count)',
+    'yes' => 'Ja',
+    'no' => 'Nein',
+    'all' => 'Alle',
+    'export' => 'Exportieren',
+    'selected' => 'Ausgewählte',
+    'selected_items' => 'Ausgewählt <span class="font-medium">:selected</span> von <span class="font-medium">:items</span> Einträgen',
 
-    'filters' => 'Filters',
-    'clear_filters' => 'Clear Filters',
+    'filters' => 'Filter',
+    'clear_filters' => 'Filter zurücksetzen',
 
-    'no_results' => 'No records found',
+    'no_results' => 'Keine Einträge gefunden',
 
-    'pagination_previous' => 'Previous',
-    'pagination_next' => 'Next',
-    'pagination_text' => 'Showing :first to :last of :total entries',
+    'pagination_previous' => 'Vorherige',
+    'pagination_next' => 'Nächste',
+    'pagination_text' => 'Zeige :first bis :last von :total Einträgen',
 ];

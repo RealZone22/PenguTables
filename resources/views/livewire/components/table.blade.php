@@ -145,27 +145,30 @@
             <x-table.header>
                 @if($options->bulkActions)
                     <x-table.header.item class="py-1 px-3 pe-0">
-                        <x-checkbox
-                            wire:model.live="selectAll"
-                        />
+                        <x-checkbox wire:model.live="selectAll"/>
                     </x-table.header.item>
                 @endif
 
                 @foreach($columns as $column)
                     @unless($column->hidden)
-                        <x-table.header.item class="py-1">
+                        <x-table.header.item class="py-1 px-2.5 text-sm">
                             @if($column->sortable)
                                 <button
-                                    wire:click="sort('{{ $column->key }}')"
-                                    class="py-1 px-2.5 inline-flex items-center border border-transparent text-sm text-gray-500 rounded-md hover:border-gray-200 dark:text-neutral-500 dark:hover:border-neutral-700"
-                                >
-                                    {{ $column->label }}
+                                    type="button"
+                                    class="flex items-center cursor-pointer py-1 gap-1 w-full"
+                                    wire:click="sort('{{ $column->key }}')">
+                                    <span>{{ $column->label }}</span>
+                                    <i class="
+                                        @if($sortField === $column->key)
+                                            icon-chevron-{{ $sortDirection === 'desc' ? 'up' : 'down' }}
+                                        @else
+                                            icon-chevrons-up-down
+                                        @endif
+                                        text-xs
+                                    "></i>
                                 </button>
                             @else
-                                <div
-                                    class="py-1 px-2.5 inline-flex items-center border border-transparent text-sm text-gray-500 rounded-md">
-                                    {{ $column->label }}
-                                </div>
+                                <div class="w-full">{{ $column->label }}</div>
                             @endif
                         </x-table.header.item>
                     @endunless
