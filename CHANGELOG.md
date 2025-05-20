@@ -2,6 +2,10 @@
 
 All notable changes to `PenguTables` will be documented in this file.
 
+## 1.0.0-BETA.3 - 2025-05-19
+
+**Full Changelog**: https://github.com/RealZone22/PenguTables/compare/1.0.0-BETA.2...1.0.0-BETA.3
+
 ## 1.0.0-BETA.2 - 2025-05-19
 
 **Full Changelog**: https://github.com/RealZone22/PenguTables/compare/1.0.0-BETA.1...1.0.0-BETA.2
