@@ -17,6 +17,7 @@ class SelectFilter extends Filter
     public function options(array $options): static
     {
         $this->options = ['' => __('pengutables::tables.all')] + $options;
+
         return $this;
     }
 
