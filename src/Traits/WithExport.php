@@ -10,7 +10,8 @@ trait WithExport
 {
     public function exportSelected($type)
     {
-        return $this->export($this->query()->whereIn('id', $this->selected)->get(), $type);
+        $primaryKey = $this->options->primaryKey ?? 'id';
+        return $this->export($this->query()->whereIn($primaryKey, $this->selected)->get(), $type);
     }
 
     public function exportAll($type)
@@ -21,7 +22,7 @@ trait WithExport
     protected function export($data, $type)
     {
         $filename = config('pengutables.export_filename', 'export_'.now()->format('Ymd_Hi'));
-        $exportColumns = collect($this->columns())->filter(fn ($column) => $column->showInExport)->values()->toArray();
+        $exportColumns = collect($this->columns())->filter(fn ($column) => $column->hideInExport)->values()->toArray();
 
         $headers = collect($exportColumns)->map(fn ($column) => $column->label)->toArray();
         $rows = $data->map(function ($item) use ($exportColumns) {
@@ -68,12 +69,14 @@ trait WithExport
         $sheet = $spreadsheet->getActiveSheet();
 
         foreach ($headers as $colIndex => $header) {
-            $sheet->setCellValue($colIndex + 1, 1, $header);
+            $coordinate = Coordinate::stringFromColumnIndex($colIndex + 1) . '1';
+            $sheet->setCellValue($coordinate, $header);
         }
 
         foreach ($rows as $rowIndex => $rowData) {
             foreach ($rowData as $colIndex => $cellValue) {
-                $sheet->setCellValue($colIndex + 1, $rowIndex + 2, $cellValue);
+                $coordinate = Coordinate::stringFromColumnIndex($colIndex + 1) . ($rowIndex + 2);
+                $sheet->setCellValue($coordinate, $cellValue);
             }
         }
 

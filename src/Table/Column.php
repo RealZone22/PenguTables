@@ -18,7 +18,7 @@ class Column implements Wireable
 
     public bool $hidden = false;
 
-    public bool $showInExport = true;
+    public bool $hideInExport = true;
 
     public bool $html = false;
 
@@ -46,6 +46,7 @@ class Column implements Wireable
             return implode('', $actions);
         });
 
+        $instance->hideInExport();
         $instance->html();
 
         return $instance;
@@ -99,9 +100,9 @@ class Column implements Wireable
         return $this;
     }
 
-    public function showInExport(bool $enabled = true): static
+    public function hideInExport(bool $enabled = true): static
     {
-        $this->showInExport = $enabled;
+        $this->hideInExport = !$enabled;
 
         return $this;
     }
@@ -140,7 +141,7 @@ class Column implements Wireable
             'sortable' => $this->sortable,
             'searchable' => $this->searchable,
             'hidden' => $this->hidden,
-            'showInExport' => $this->showInExport,
+            'hideInExport' => $this->hideInExport,
             'html' => $this->html,
             'formatSerialized' => $this->formatSerialized,
         ];
@@ -152,7 +153,7 @@ class Column implements Wireable
         $instance->sortable = $value['sortable'];
         $instance->searchable = $value['searchable'];
         $instance->hidden = $value['hidden'];
-        $instance->showInExport = $value['showInExport'] ?? true;
+        $instance->hideInExport = $value['hideInExport'] ?? true;
         $instance->html = $value['html'];
         $instance->formatSerialized = $value['formatSerialized'];
 
