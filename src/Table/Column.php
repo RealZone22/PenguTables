@@ -102,7 +102,7 @@ class Column implements Wireable
 
     public function hideInExport(bool $enabled = true): static
     {
-        $this->hideInExport = !$enabled;
+        $this->hideInExport = ! $enabled;
 
         return $this;
     }

@@ -11,6 +11,7 @@ trait WithExport
     public function exportSelected($type)
     {
         $primaryKey = $this->options->primaryKey ?? 'id';
+
         return $this->export($this->query()->whereIn($primaryKey, $this->selected)->get(), $type);
     }
 
@@ -69,13 +70,13 @@ trait WithExport
         $sheet = $spreadsheet->getActiveSheet();
 
         foreach ($headers as $colIndex => $header) {
-            $coordinate = Coordinate::stringFromColumnIndex($colIndex + 1) . '1';
+            $coordinate = Coordinate::stringFromColumnIndex($colIndex + 1).'1';
             $sheet->setCellValue($coordinate, $header);
         }
 
         foreach ($rows as $rowIndex => $rowData) {
             foreach ($rowData as $colIndex => $cellValue) {
-                $coordinate = Coordinate::stringFromColumnIndex($colIndex + 1) . ($rowIndex + 2);
+                $coordinate = Coordinate::stringFromColumnIndex($colIndex + 1).($rowIndex + 2);
                 $sheet->setCellValue($coordinate, $cellValue);
             }
         }
