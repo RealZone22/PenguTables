@@ -149,30 +149,30 @@
                     </x-table.header.item>
                 @endif
 
-                @foreach($columns as $column)
-                    @unless($column->hidden)
-                        <x-table.header.item class="py-1 px-2.5 text-sm">
-                            @if($column->sortable)
-                                <button
-                                    type="button"
-                                    class="flex items-center cursor-pointer py-1 gap-1 w-full"
-                                    wire:click="sort('{{ $column->key }}')">
-                                    <span>{{ $column->label }}</span>
-                                    <i class="
-                                        @if($sortField === $column->key)
-                                            icon-chevron-{{ $sortDirection === 'desc' ? 'up' : 'down' }}
-                                        @else
-                                            icon-chevrons-up-down
-                                        @endif
-                                        text-xs
-                                    "></i>
-                                </button>
-                            @else
-                                <div class="w-full">{{ $column->label }}</div>
-                            @endif
-                        </x-table.header.item>
-                    @endunless
-                @endforeach
+                    @foreach($columns as $column)
+                        @unless($column->hidden)
+                            <x-table.header.item class="py-1 px-2.5 text-sm">
+                                @if($column->sortable)
+                                    <button
+                                        type="button"
+                                        class="flex items-center cursor-pointer py-1 gap-1 w-full"
+                                        wire:click="sort('{{ $column->key }}')">
+                                        <span class="whitespace-nowrap">{{ $column->label }}</span>
+                                        <i class="
+                                            @if($sortField === $column->key)
+                                                icon-chevron-{{ $sortDirection === 'desc' ? 'up' : 'down' }}
+                                            @else
+                                                icon-chevrons-up-down
+                                            @endif
+                                            text-xs
+                                        "></i>
+                                    </button>
+                                @else
+                                    <div class="w-full whitespace-nowrap">{{ $column->label }}</div>
+                                @endif
+                            </x-table.header.item>
+                        @endunless
+                    @endforeach
             </x-table.header>
 
             <x-table.body>
@@ -189,7 +189,7 @@
 
                         @foreach($columns as $column)
                             @unless($column->hidden)
-                                <x-table.body.item>
+                                <x-table.body.item class="whitespace-nowrap">
                                     {!! $column->getValue($item) !!}
                                 </x-table.body.item>
                             @endunless

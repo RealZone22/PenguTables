@@ -43,7 +43,7 @@ class Column implements Wireable
                 }
             }
 
-            return implode('', $actions);
+            return '<div class="flex flex-row gap-1">' . implode('', $actions) . '</div>';
         });
 
         $instance->hideInExport();

@@ -16,8 +16,7 @@ class SelectFilter extends Filter
 
     public function options(array $options): static
     {
-        $this->options = array_merge(['' => __('pengutables::tables.all')], $options);
-
+        $this->options = ['' => __('pengutables::tables.all')] + $options;
         return $this;
     }
 
