@@ -94,7 +94,7 @@
                 <x-dropdown>
                     <x-dropdown.trigger>
                         <x-button variant="outline">
-                            {{ __('pengutables::tables.export') }}
+                            {{ __('pengutables::tables.export') }} {{ count($selected) > 0 ? '(' . count($selected) . ')' : '' }}
                         </x-button>
                     </x-dropdown.trigger>
 
