@@ -2,9 +2,10 @@
 
 namespace RealZone22\PenguTables\Traits;
 
-use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use OpenSpout\Common\Entity\Row;
+use OpenSpout\Common\Entity\Style\Style;
+use OpenSpout\Writer\CSV\Writer as CsvWriter;
+use OpenSpout\Writer\XLSX\Writer as XlsxWriter;
 
 trait WithExport
 {
@@ -36,26 +37,26 @@ trait WithExport
 
         if (str_starts_with($type, 'csv')) {
             return $this->streamCsv($filename, $headers, $rows);
-        } else {
-            return $this->streamExcel($filename, $headers, $rows);
         }
+
+        return $this->streamExcel($filename, $headers, $rows);
     }
 
     protected function streamCsv($filename, $headers, $rows)
     {
-        $callback = function () use ($headers, $rows) {
-            $output = fopen('php://output', 'w');
-            fwrite($output, "\xEF\xBB\xBF");
-            fputcsv($output, $headers);
+        $writer = new CsvWriter();
 
-            foreach ($rows as $row) {
-                fputcsv($output, $row);
+        return response()->stream(function () use ($writer, $headers, $rows) {
+            $writer->openToFile('php://output');
+
+            $writer->addRow(Row::fromValues($headers));
+
+            foreach ($rows as $rowData) {
+                $writer->addRow(Row::fromValues($rowData));
             }
 
-            fclose($output);
-        };
-
-        return response()->stream($callback, 200, [
+            $writer->close();
+        }, 200, [
             'Content-Type' => 'text/csv',
             'Content-Disposition' => 'attachment; filename="'.$filename.'.csv"',
             'Pragma' => 'no-cache',
@@ -66,32 +67,20 @@ trait WithExport
 
     protected function streamExcel($filename, $headers, $rows)
     {
-        $spreadsheet = new Spreadsheet;
-        $sheet = $spreadsheet->getActiveSheet();
+        $writer = new XlsxWriter();
 
-        foreach ($headers as $colIndex => $header) {
-            $coordinate = Coordinate::stringFromColumnIndex($colIndex + 1).'1';
-            $sheet->setCellValue($coordinate, $header);
-        }
+        return response()->stream(function () use ($writer, $headers, $rows) {
+            $writer->openToFile('php://output');
 
-        foreach ($rows as $rowIndex => $rowData) {
-            foreach ($rowData as $colIndex => $cellValue) {
-                $coordinate = Coordinate::stringFromColumnIndex($colIndex + 1).($rowIndex + 2);
-                $sheet->setCellValue($coordinate, $cellValue);
+            $headerStyle = (new Style())->setFontBold();
+            $headerRow = Row::fromValues($headers, $headerStyle);
+            $writer->addRow($headerRow);
+
+            foreach ($rows as $rowData) {
+                $writer->addRow(Row::fromValues($rowData));
             }
-        }
 
-        $headerRow = $sheet->getStyle('A1:'.Coordinate::stringFromColumnIndex(count($headers)).'1');
-        $headerRow->getFont()->setBold(true);
-
-        foreach (range(1, count($headers)) as $colIndex) {
-            $sheet->getColumnDimensionByColumn($colIndex)->setAutoSize(true);
-        }
-
-        $writer = new Xlsx($spreadsheet);
-
-        return response()->stream(function () use ($writer) {
-            $writer->save('php://output');
+            $writer->close();
         }, 200, [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             'Content-Disposition' => 'attachment; filename="'.$filename.'.xlsx"',
