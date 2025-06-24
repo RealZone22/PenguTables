@@ -44,7 +44,7 @@ trait WithExport
 
     protected function streamCsv($filename, $headers, $rows)
     {
-        $writer = new CsvWriter();
+        $writer = new CsvWriter;
 
         return response()->stream(function () use ($writer, $headers, $rows) {
             $writer->openToFile('php://output');
@@ -67,12 +67,12 @@ trait WithExport
 
     protected function streamExcel($filename, $headers, $rows)
     {
-        $writer = new XlsxWriter();
+        $writer = new XlsxWriter;
 
         return response()->stream(function () use ($writer, $headers, $rows) {
             $writer->openToFile('php://output');
 
-            $headerStyle = (new Style())->setFontBold();
+            $headerStyle = (new Style)->setFontBold();
             $headerRow = Row::fromValues($headers, $headerStyle);
             $writer->addRow($headerRow);
 
