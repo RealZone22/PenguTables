@@ -177,7 +177,7 @@
 
             <x-table.body>
                 @forelse($data as $item)
-                    <x-table.body.row>
+                    <x-table.body.row wire:key="row-{{ $item->{$options->primaryKey} }}">
                         @if($options->bulkActions)
                             <x-table.body.item class="py-3 ps-3">
                                 <x-checkbox
