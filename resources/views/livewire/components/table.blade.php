@@ -140,6 +140,31 @@
         </div>
     </div>
 
+    @if(count(array_filter($activeFilters ?? [])) > 0)
+        <div class="mb-2 flex flex-wrap gap-2 items-center">
+            @foreach($this->filters() as $filter)
+                @php
+                    $value = $activeFilters[$filter->key] ?? null;
+                @endphp
+                @if(!empty($value))
+                    <x-badge size="xs" class="flex items-center">
+                        {{ $filter->label }}:
+                        @if(is_array($value))
+                            {{ implode(', ', $value) }}
+                        @else
+                            {{ $filter->options[$value] ?? $value }}
+                        @endif
+                        <i class="icon-x text-danger ml-1 cursor-pointer"
+                           wire:click="removeFilter('{{ $filter->key }}')"></i>
+                    </x-badge>
+                @endif
+            @endforeach
+            <x-link wire:click="resetFilters" class="text-xs">
+                {{ __('pengutables::tables.clear_filters') }}
+            </x-link>
+        </div>
+    @endif
+
     <div class="overflow-x-auto">
         <x-table>
             <x-table.header>
