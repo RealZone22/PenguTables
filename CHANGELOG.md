@@ -2,6 +2,20 @@
 
 All notable changes to `PenguTables` will be documented in this file.
 
+## 1.1.0 - 2025-07-31
+
+### What's Changed
+
+* Bump aglipanci/laravel-pint-action from 2.5 to 2.6 by @dependabot[bot] in https://github.com/RealZone22/PenguTables/pull/6
+* Add so active filters a shown under the header actions by @RealZone22 in https://github.com/RealZone22/PenguTables/pull/8
+* Bump stefanzweifel/git-auto-commit-action from 5 to 6 by @dependabot[bot] in https://github.com/RealZone22/PenguTables/pull/2
+
+### New Contributors
+
+* @dependabot[bot] made their first contribution in https://github.com/RealZone22/PenguTables/pull/6
+
+**Full Changelog**: https://github.com/RealZone22/PenguTables/compare/1.0.4...1.1.0
+
 ## 1.0.4 - 2025-07-14
 
 ### What's Changed
