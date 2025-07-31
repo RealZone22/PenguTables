@@ -141,6 +141,13 @@ abstract class PenguTable extends Component
         }
     }
 
+    public function removeFilter($key): void
+    {
+        if (isset($this->activeFilters[$key])) {
+            unset($this->activeFilters[$key]);
+        }
+    }
+
     protected function applySort(Builder $query): Builder
     {
         if ($this->sortField) {
