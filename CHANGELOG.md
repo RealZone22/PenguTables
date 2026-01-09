@@ -2,6 +2,15 @@
 
 All notable changes to `PenguTables` will be documented in this file.
 
+## 1.1.1 - 2026-01-09
+
+### What's Changed
+
+* Refactor data querying and export functionality for improved performance and clarity
+* Bump dependabot/fetch-metadata from 2.4.0 to 2.5.0 by @dependabot[bot] in https://github.com/RealZone22/PenguTables/pull/15
+
+**Full Changelog**: https://github.com/RealZone22/PenguTables/compare/1.1.0...1.1.1
+
 ## 1.1.0 - 2025-07-31
 
 ### What's Changed
