@@ -194,7 +194,7 @@ abstract class PenguTable extends Component
     public function mount(): void
     {
         $this->columns = collect($this->columns())
-            ->filter(fn($column) => !$column->hidden)
+            ->filter(fn ($column) => ! $column->hidden)
             ->values()
             ->toArray();
         $this->initializeFilters();
