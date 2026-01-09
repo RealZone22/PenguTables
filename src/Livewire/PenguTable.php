@@ -109,7 +109,10 @@ abstract class PenguTable extends Component
     public function updatedSelectAll($value): void
     {
         if ($value) {
-            $this->selected = $this->data->pluck($this->options->primaryKey)
+            $query = $this->applyFilters($this->applySearch($this->query()));
+            $this->selected = $query
+                ->limit($this->perPage)
+                ->pluck($this->options->primaryKey)
                 ->map(fn ($id) => (string) $id)
                 ->toArray();
         } else {
@@ -172,8 +175,10 @@ abstract class PenguTable extends Component
 
     public function getDataProperty(): LengthAwarePaginator
     {
-        $query = $this->applySort($this->applyFilters($this->applySearch($this->query())));
-        $this->columns = collect($this->columns())->filter(fn ($column) => ! $column->hidden)->toArray();
+        $query = $this->query();
+        $query = $this->applySearch($query);
+        $query = $this->applyFilters($query);
+        $query = $this->applySort($query);
 
         return $query->paginate($this->perPage);
     }
@@ -188,7 +193,10 @@ abstract class PenguTable extends Component
 
     public function mount(): void
     {
-        $this->columns = $this->columns();
+        $this->columns = collect($this->columns())
+            ->filter(fn($column) => !$column->hidden)
+            ->values()
+            ->toArray();
         $this->initializeFilters();
     }
 
