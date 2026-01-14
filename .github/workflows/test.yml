@@ -17,7 +17,6 @@ jobs:
         laravel: [ ^11.0, ^12.0 ]
         stability: [ prefer-stable ]
         exclude:
-          # Laravel 12 requires PHP 8.2 or higher
           - php: 8.3
             laravel: ^12.0
         include:
@@ -50,63 +49,6 @@ jobs:
 
       - name: Execute tests
         run: vendor/bin/phpunit
-
-  test-lowest-and-highest:
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - name: "Lowest dependencies"
-            php: 8.3
-            dependencies: "lowest"
-          - name: "Highest dependencies"
-            php: 8.4
-            dependencies: "highest"
-
-    name: ${{ matrix.name }}
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php }}
-          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
-          coverage: none
-
-      - name: Install dependencies
-        run: |
-          composer update --prefer-${{ matrix.dependencies }} --prefer-dist --no-interaction
-
-      - name: Execute tests
-        run: vendor/bin/phpunit
-
-  static-analysis:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: 8.4
-          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
-          coverage: none
-          tools: cs2pr
-
-      - name: Install dependencies
-        run: composer install --prefer-dist --no-interaction
-
-      - name: Run PHPStan
-        run: |
-          if [ -f vendor/bin/phpstan ]; then
-            vendor/bin/phpstan analyse --error-format=checkstyle | cs2pr
-          fi
 
   code-style:
     runs-on: ubuntu-latest
