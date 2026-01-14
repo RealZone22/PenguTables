@@ -13,6 +13,6 @@ class PenguTablesServiceProvider extends PackageServiceProvider
             ->name('pengutables')
             ->hasConfigFile()
             ->hasTranslations()
-            ->hasViews();
+            ->hasViews('pengutables');
     }
 }
