@@ -2,6 +2,17 @@
 
 All notable changes to `PenguTables` will be documented in this file.
 
+## 1.2.0 - 2026-01-14
+
+### What's Changed
+
+* Add Livewire 4 support by @RealZone22 in https://github.com/RealZone22/PenguTables/pull/17
+* Update openspout/openspout requirement from ^4.30 to ^5.2 by @dependabot[bot] in https://github.com/RealZone22/PenguTables/pull/14
+* Bump stefanzweifel/git-auto-commit-action from 6 to 7 by @dependabot[bot] in https://github.com/RealZone22/PenguTables/pull/10
+* Bump actions/checkout from 4 to 6 by @dependabot[bot] in https://github.com/RealZone22/PenguTables/pull/11
+
+**Full Changelog**: https://github.com/RealZone22/PenguTables/compare/1.1.1...1.2.0
+
 ## 1.1.1 - 2026-01-09
 
 ### What's Changed
