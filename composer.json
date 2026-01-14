@@ -20,13 +20,13 @@
         "spatie/laravel-package-tools": "^1.16",
         "illuminate/contracts": "^10.0||^11.0||^12.0",
         "livewire/livewire": "^3.6||^4.0",
-        "openspout/openspout": "^4.30"
+        "openspout/openspout": "^5.2"
     },
     "require-dev": {
         "laravel/pint": "^1.14",
         "nunomaduro/collision": "^8.1.1||^7.10.0",
         "larastan/larastan": "^2.9||^3.0",
-        "orchestra/testbench": "^9.0.0||^8.22.0",
+        "orchestra/testbench": "^10.0.0||^9.0.0||^8.22.0",
         "phpunit/phpunit": "^10.5.15",
         "spatie/laravel-ray": "^1.35"
     },
