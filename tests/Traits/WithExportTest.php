@@ -12,21 +12,23 @@ class WithExportTest extends TestCase
     public function it_processes_html_content_correctly_for_export()
     {
         // Create a mock class that uses the WithExport trait
-        $mock = new class {
+        $mock = new class
+        {
             use WithExport;
 
             public function columns()
             {
                 return [
                     Column::make('Email', 'email')->format(function ($value) {
-                        return '<strong>' . $value . '</strong>';
+                        return '<strong>'.$value.'</strong>';
                     })->html(),
                 ];
             }
         };
 
         // Create a mock model
-        $model = new class {
+        $model = new class
+        {
             public $email = 'john@example.com';
         };
 
@@ -59,7 +61,7 @@ class WithExportTest extends TestCase
         $this->assertFalse($column3->hideInExport); // hideInExport(true) sets it to false
 
         // Filter columns as done in WithExport trait
-        $exportColumns = collect($columns)->filter(fn($column) => $column->hideInExport)->values()->toArray();
+        $exportColumns = collect($columns)->filter(fn ($column) => $column->hideInExport)->values()->toArray();
 
         // Columns with hideInExport = true should be included (column1 and column2)
         $this->assertCount(2, $exportColumns);

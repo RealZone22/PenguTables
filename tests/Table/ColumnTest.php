@@ -46,7 +46,8 @@ class ColumnTest extends TestCase
         });
 
         // Create a simple object to test with
-        $model = new class {
+        $model = new class
+        {
             public $name = 'john doe';
         };
 
@@ -59,7 +60,8 @@ class ColumnTest extends TestCase
         $column = Column::make('Name', 'name');
 
         // Create a simple object with HTML content
-        $model = new class {
+        $model = new class
+        {
             public $name = '<script>alert("xss")</script>';
         };
 
@@ -72,7 +74,8 @@ class ColumnTest extends TestCase
         $column = Column::make('Name', 'name')->html();
 
         // Create a simple object with HTML content
-        $model = new class {
+        $model = new class
+        {
             public $name = '<strong>John Doe</strong>';
         };
 
