@@ -73,17 +73,17 @@ abstract class PenguTable extends Component
         if ($this->options->searchable && $this->search) {
             $searchTerms = array_filter(explode(' ', strtolower(trim($this->search))));
 
-            if (!empty($searchTerms)) {
+            if (! empty($searchTerms)) {
                 $query->where(function (Builder $subQuery) use ($searchTerms) {
                     $searchableColumns = collect($this->columns)
-                        ->filter(fn($column) => $column->searchable && $column->key)
+                        ->filter(fn ($column) => $column->searchable && $column->key)
                         ->pluck('key')
                         ->toArray();
 
                     foreach ($searchTerms as $term) {
                         $subQuery->where(function (Builder $termQuery) use ($term, $searchableColumns) {
                             foreach ($searchableColumns as $column) {
-                                $termQuery->orWhere($column, 'LIKE', '%' . $term . '%');
+                                $termQuery->orWhere($column, 'LIKE', '%'.$term.'%');
                             }
                         });
                     }
@@ -113,7 +113,7 @@ abstract class PenguTable extends Component
             $this->selected = $query
                 ->limit($this->perPage)
                 ->pluck($this->options->primaryKey)
-                ->map(fn($id) => (string)$id)
+                ->map(fn ($id) => (string) $id)
                 ->toArray();
         } else {
             $this->selected = [];
@@ -122,8 +122,8 @@ abstract class PenguTable extends Component
 
     public function executeBulkAction(string $actionLabel): void
     {
-        $action = collect($this->bulkActions())->first(fn($action) => $action->getLabel() === $actionLabel);
-        if ($action && !empty($this->selected)) {
+        $action = collect($this->bulkActions())->first(fn ($action) => $action->getLabel() === $actionLabel);
+        if ($action && ! empty($this->selected)) {
             $rows = $this->query()->whereIn($this->options->primaryKey, $this->selected)->get();
             $action->execute($rows);
             $this->selected = [];
@@ -186,7 +186,7 @@ abstract class PenguTable extends Component
     public function boot(): void
     {
         $this->options = $this->setupOptions();
-        if (!isset($this->perPage) || $this->perPage <= 0) {
+        if (! isset($this->perPage) || $this->perPage <= 0) {
             $this->perPage = $this->options->perPageOptions[0];
         }
     }
@@ -194,7 +194,7 @@ abstract class PenguTable extends Component
     public function mount(): void
     {
         $this->columns = collect($this->columns())
-            ->filter(fn($column) => !$column->hidden)
+            ->filter(fn ($column) => ! $column->hidden)
             ->values()
             ->toArray();
         $this->initializeFilters();

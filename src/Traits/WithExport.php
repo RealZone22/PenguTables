@@ -19,6 +19,7 @@ trait WithExport
     public function exportAll($type)
     {
         $query = $this->applyFilters($this->applySearch($this->query()));
+
         return $this->exportChunked($query, $type);
     }
 
@@ -45,9 +46,9 @@ trait WithExport
 
     protected function exportChunked($query, $type)
     {
-        $filename = config('pengutables.export_filename', 'export_' . now()->format('Ymd_Hi'));
-        $exportColumns = collect($this->columns())->filter(fn($column) => $column->hideInExport)->values()->toArray();
-        $headers = collect($exportColumns)->map(fn($column) => $column->label)->toArray();
+        $filename = config('pengutables.export_filename', 'export_'.now()->format('Ymd_Hi'));
+        $exportColumns = collect($this->columns())->filter(fn ($column) => $column->hideInExport)->values()->toArray();
+        $headers = collect($exportColumns)->map(fn ($column) => $column->label)->toArray();
 
         if (str_starts_with($type, 'csv')) {
             return $this->streamChunkedCsv($filename, $headers, $query, $exportColumns);
@@ -72,7 +73,7 @@ trait WithExport
             $writer->close();
         }, 200, [
             'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '.csv"',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'.csv"',
             'Pragma' => 'no-cache',
             'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
             'Expires' => '0',
@@ -156,7 +157,7 @@ trait WithExport
             $writer->close();
         }, 200, [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '.xlsx"',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'.xlsx"',
             'Pragma' => 'no-cache',
             'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
             'Expires' => '0',
