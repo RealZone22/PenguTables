@@ -2,6 +2,14 @@
 
 All notable changes to `PenguTables` will be documented in this file.
 
+## 1.2.1 - 2026-01-17
+
+### What's Changed
+
+* Fix symbol formatting by @RealZone22 in https://github.com/RealZone22/PenguTables/pull/19
+
+**Full Changelog**: https://github.com/RealZone22/PenguTables/compare/1.2.0...1.2.1
+
 ## 1.2.0 - 2026-01-14
 
 ### What's Changed
