@@ -33,7 +33,7 @@ trait WithExport
             return collect($exportColumns)->map(function ($column) use ($item) {
                 $value = $column->getValue($item);
 
-                return strip_tags($value);
+                return html_entity_decode(strip_tags($value), ENT_QUOTES | ENT_HTML5, 'UTF-8');
             })->toArray();
         })->toArray();
 
