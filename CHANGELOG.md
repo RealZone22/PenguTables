@@ -2,6 +2,16 @@
 
 All notable changes to `PenguTables` will be documented in this file.
 
+## 1.2.2 - 2026-01-30
+
+### What's Changed
+
+* Fix select all only selecting the first page by @RealZone22 in https://github.com/RealZone22/PenguTables/pull/23
+* Bump actions/checkout from 4 to 6 by @dependabot[bot] in https://github.com/RealZone22/PenguTables/pull/20
+* Update phpunit/phpunit requirement from ^10.5.15 to ^12.5.7 by @dependabot[bot] in https://github.com/RealZone22/PenguTables/pull/22
+
+**Full Changelog**: https://github.com/RealZone22/PenguTables/compare/1.2.1...1.2.2
+
 ## 1.2.1 - 2026-01-17
 
 ### What's Changed
