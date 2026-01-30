@@ -2,13 +2,14 @@
 
 namespace RealZone22\PenguTables\Tests\Table;
 
+use PHPUnit\Framework\Attributes\Test;
 use RealZone22\PenguTables\Table\ExportTypes;
 use RealZone22\PenguTables\Table\Options;
 use RealZone22\PenguTables\Tests\TestCase;
 
 class OptionsTest extends TestCase
 {
-    /** @test */
+    #[Test]
     public function it_can_create_default_options()
     {
         $options = Options::make();
@@ -24,7 +25,7 @@ class OptionsTest extends TestCase
         $this->assertEquals(2, $options->paginationPages);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_set_per_page()
     {
         $options = Options::make()->setPerPage(25);
@@ -32,7 +33,7 @@ class OptionsTest extends TestCase
         $this->assertEquals(25, $options->perPage);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_set_pagination_pages()
     {
         $options = Options::make()->setPaginationPages(5);
@@ -40,7 +41,7 @@ class OptionsTest extends TestCase
         $this->assertEquals(5, $options->paginationPages);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_set_per_page_options()
     {
         $options = Options::make()->setPerPageOptions([15, 30, 60]);
@@ -48,7 +49,7 @@ class OptionsTest extends TestCase
         $this->assertEquals([15, 30, 60], $options->perPageOptions);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_set_primary_key()
     {
         $options = Options::make()->setPrimaryKey('uuid');
@@ -56,7 +57,7 @@ class OptionsTest extends TestCase
         $this->assertEquals('uuid', $options->primaryKey);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_disable_export()
     {
         $options = Options::make()->withExport(false);
@@ -65,7 +66,7 @@ class OptionsTest extends TestCase
         $this->assertEmpty($options->exportTypes);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_set_specific_export_types()
     {
         $options = Options::make()->withExport(true, ExportTypes::CSV_ALL, ExportTypes::XLSX_ALL);
@@ -76,7 +77,7 @@ class OptionsTest extends TestCase
         $this->assertContains(ExportTypes::XLSX_ALL, $options->exportTypes);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_disable_bulk_actions()
     {
         $options = Options::make()->withBulkActions(false);
@@ -84,7 +85,7 @@ class OptionsTest extends TestCase
         $this->assertFalse($options->bulkActions);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_disable_search()
     {
         $options = Options::make()->withSearch(false);
@@ -92,7 +93,7 @@ class OptionsTest extends TestCase
         $this->assertFalse($options->searchable);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_disable_show_items_per_page()
     {
         $options = Options::make()->withShowItemsPerPage(false);
@@ -100,7 +101,7 @@ class OptionsTest extends TestCase
         $this->assertFalse($options->showItemsPerPage);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_disable_loading_indicator()
     {
         $options = Options::make()->withLoading(false);

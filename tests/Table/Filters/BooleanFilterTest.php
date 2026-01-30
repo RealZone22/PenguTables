@@ -2,12 +2,13 @@
 
 namespace RealZone22\PenguTables\Tests\Table\Filters;
 
+use PHPUnit\Framework\Attributes\Test;
 use RealZone22\PenguTables\Table\Filters\BooleanFilter;
 use RealZone22\PenguTables\Tests\TestCase;
 
 class BooleanFilterTest extends TestCase
 {
-    /** @test */
+    #[Test]
     public function it_can_create_a_boolean_filter()
     {
         $filter = BooleanFilter::make('active');
@@ -22,7 +23,7 @@ class BooleanFilterTest extends TestCase
         $this->assertArrayHasKey('false', $filter->options);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_set_custom_labels()
     {
         $filter = BooleanFilter::make('active')
@@ -35,7 +36,7 @@ class BooleanFilterTest extends TestCase
         $this->assertEquals('Inactive', $filter->options['false']);
     }
 
-    /** @test */
+    #[Test]
     public function it_has_default_filter_callback()
     {
         $filter = BooleanFilter::make('verified');
