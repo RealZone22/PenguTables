@@ -2,13 +2,14 @@
 
 namespace RealZone22\PenguTables\Tests\Table;
 
+use PHPUnit\Framework\Attributes\Test;
 use RealZone22\PenguTables\Table\Action;
 use RealZone22\PenguTables\Table\Column;
 use RealZone22\PenguTables\Tests\TestCase;
 
 class ColumnTest extends TestCase
 {
-    /** @test */
+    #[Test]
     public function it_can_create_a_basic_column()
     {
         $column = Column::make('Name', 'name');
@@ -22,7 +23,7 @@ class ColumnTest extends TestCase
         $this->assertFalse($column->html);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_make_a_column_sortable()
     {
         $column = Column::make('Name', 'name')->sortable();
@@ -30,7 +31,7 @@ class ColumnTest extends TestCase
         $this->assertTrue($column->sortable);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_make_a_column_searchable()
     {
         $column = Column::make('Name', 'name')->searchable();
@@ -38,7 +39,7 @@ class ColumnTest extends TestCase
         $this->assertTrue($column->searchable);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_format_a_column_value()
     {
         $column = Column::make('Name', 'name')->format(function ($value) {
@@ -54,7 +55,7 @@ class ColumnTest extends TestCase
         $this->assertEquals('JOHN DOE', $column->getValue($model));
     }
 
-    /** @test */
+    #[Test]
     public function it_escapes_html_by_default()
     {
         $column = Column::make('Name', 'name');
@@ -68,7 +69,7 @@ class ColumnTest extends TestCase
         $this->assertEquals('&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;', $column->getValue($model));
     }
 
-    /** @test */
+    #[Test]
     public function it_does_not_escape_html_when_marked_as_html()
     {
         $column = Column::make('Name', 'name')->html();
@@ -82,7 +83,7 @@ class ColumnTest extends TestCase
         $this->assertEquals('<strong>John Doe</strong>', $column->getValue($model));
     }
 
-    /** @test */
+    #[Test]
     public function it_can_create_an_actions_column()
     {
         $column = Column::actions('Actions', function ($row) {
@@ -97,7 +98,7 @@ class ColumnTest extends TestCase
         $this->assertFalse($column->hideInExport); // Actions should be visible in export by default
     }
 
-    /** @test */
+    #[Test]
     public function it_can_hide_a_column()
     {
         $column = Column::make('Name', 'name')->hidden();
@@ -105,7 +106,7 @@ class ColumnTest extends TestCase
         $this->assertTrue($column->hidden);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_conditionally_hide_a_column()
     {
         $column = Column::make('Name', 'name')->hideIf(function () {
@@ -115,7 +116,7 @@ class ColumnTest extends TestCase
         $this->assertTrue($column->hidden);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_control_visibility_in_export()
     {
         $column = Column::make('Name', 'name')->hideInExport(false);
@@ -127,7 +128,7 @@ class ColumnTest extends TestCase
         $this->assertFalse($column2->hideInExport); // Note: hideInExport(true) means hide in export
     }
 
-    /** @test */
+    #[Test]
     public function it_implements_wireable_interface()
     {
         $column = Column::make('Name', 'name')->sortable()->searchable();

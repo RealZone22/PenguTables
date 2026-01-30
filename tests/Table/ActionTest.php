@@ -2,12 +2,13 @@
 
 namespace RealZone22\PenguTables\Tests\Table;
 
+use PHPUnit\Framework\Attributes\Test;
 use RealZone22\PenguTables\Table\Action;
 use RealZone22\PenguTables\Tests\TestCase;
 
 class ActionTest extends TestCase
 {
-    /** @test */
+    #[Test]
     public function it_can_create_an_action()
     {
         $action = Action::make('<button>Click Me</button>');
@@ -15,7 +16,7 @@ class ActionTest extends TestCase
         $this->assertInstanceOf(Action::class, $action);
     }
 
-    /** @test */
+    #[Test]
     public function it_stores_the_action_content()
     {
         $action = Action::make('<button>Click Me</button>');
@@ -25,7 +26,7 @@ class ActionTest extends TestCase
         $this->assertEquals('<button>Click Me</button>', $livewireData['action']);
     }
 
-    /** @test */
+    #[Test]
     public function it_implements_wireable_interface()
     {
         $action = Action::make('<button>Click Me</button>');

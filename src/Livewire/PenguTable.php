@@ -110,8 +110,10 @@ abstract class PenguTable extends Component
     {
         if ($value) {
             $query = $this->applyFilters($this->applySearch($this->query()));
+            $query = $this->applySort($query);
+            $currentPage = $this->getPage();
             $this->selected = $query
-                ->limit($this->perPage)
+                ->forPage($currentPage, $this->perPage)
                 ->pluck($this->options->primaryKey)
                 ->map(fn ($id) => (string) $id)
                 ->toArray();

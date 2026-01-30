@@ -2,13 +2,14 @@
 
 namespace RealZone22\PenguTables\Tests\Traits;
 
+use PHPUnit\Framework\Attributes\Test;
 use RealZone22\PenguTables\Table\Column;
 use RealZone22\PenguTables\Tests\TestCase;
 use RealZone22\PenguTables\Traits\WithExport;
 
 class WithExportTest extends TestCase
 {
-    /** @test */
+    #[Test]
     public function it_processes_html_content_correctly_for_export()
     {
         // Create a mock class that uses the WithExport trait
@@ -45,7 +46,7 @@ class WithExportTest extends TestCase
         $this->assertEquals('john@example.com', $strippedValue);
     }
 
-    /** @test */
+    #[Test]
     public function it_correctly_filters_columns_for_export()
     {
         // Create columns with different hideInExport settings
