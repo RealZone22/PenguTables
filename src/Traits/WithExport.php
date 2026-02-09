@@ -140,7 +140,7 @@ trait WithExport
         return response()->stream(function () use ($writer, $headers, $query, $exportColumns) {
             $writer->openToFile('php://output');
 
-            $headerStyle = (new Style)->setFontBold();
+            $headerStyle = (new Style)->withFontBold(true);
             $headerRow = Row::fromValues($headers, $headerStyle);
             $writer->addRow($headerRow);
 
