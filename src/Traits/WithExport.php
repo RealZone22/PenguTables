@@ -3,7 +3,6 @@
 namespace RealZone22\PenguTables\Traits;
 
 use OpenSpout\Common\Entity\Row;
-use OpenSpout\Common\Entity\Style\Style;
 use OpenSpout\Writer\CSV\Writer as CsvWriter;
 use OpenSpout\Writer\XLSX\Writer as XlsxWriter;
 
@@ -115,8 +114,7 @@ trait WithExport
         return response()->stream(function () use ($writer, $headers, $rows) {
             $writer->openToFile('php://output');
 
-            $headerStyle = (new Style)->setFontBold();
-            $headerRow = Row::fromValues($headers, $headerStyle);
+            $headerRow = Row::fromValues($headers);
             $writer->addRow($headerRow);
 
             foreach ($rows as $rowData) {
@@ -140,8 +138,7 @@ trait WithExport
         return response()->stream(function () use ($writer, $headers, $query, $exportColumns) {
             $writer->openToFile('php://output');
 
-            $headerStyle = (new Style)->withFontBold(true);
-            $headerRow = Row::fromValues($headers, $headerStyle);
+            $headerRow = Row::fromValues($headers);
             $writer->addRow($headerRow);
 
             $query->chunk(1000, function ($items) use ($writer, $exportColumns) {
