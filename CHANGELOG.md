@@ -2,6 +2,15 @@
 
 All notable changes to `PenguTables` will be documented in this file.
 
+## 1.2.3 - 2026-02-09
+
+### What's Changed
+
+* Fix `setFontBold` not found in openspout 5.3 by @RealZone22 in https://github.com/RealZone22/PenguTables/pull/24
+* Fix excel export again by @RealZone22 in https://github.com/RealZone22/PenguTables/pull/25
+
+**Full Changelog**: https://github.com/RealZone22/PenguTables/compare/1.2.2...1.2.3
+
 ## 1.2.2 - 2026-01-30
 
 ### What's Changed
