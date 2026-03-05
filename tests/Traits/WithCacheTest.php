@@ -20,14 +20,20 @@ class WithCacheTest extends TestCase
 
     protected function createCacheMock()
     {
-        return new class {
+        return new class
+        {
             use WithCache;
 
             public Options $options;
+
             public int $perPage = 10;
+
             public string $search = '';
+
             public string $sortField = '';
+
             public string $sortDirection = 'asc';
+
             public array $activeFilters = [];
 
             public function __construct()

@@ -30,7 +30,7 @@ trait WithCache
      */
     public function getDataProperty(): LengthAwarePaginator
     {
-        if (!$this->isCacheEnabled()) {
+        if (! $this->isCacheEnabled()) {
             return $this->fetchData();
         }
 
@@ -92,7 +92,7 @@ trait WithCache
             return $this->options->cacheKeyPrefix;
         }
 
-        return 'pengutable_' . strtolower(class_basename(static::class));
+        return 'pengutable_'.strtolower(class_basename(static::class));
     }
 
     /**

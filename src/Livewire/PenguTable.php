@@ -85,7 +85,7 @@ abstract class PenguTable extends Component
         $query = $this->applyFilters($query);
 
         $totalItems = $query->count();
-        $lastPage = max(1, (int)ceil($totalItems / $this->perPage));
+        $lastPage = max(1, (int) ceil($totalItems / $this->perPage));
         $currentPage = $this->getPage();
 
         if ($currentPage > $lastPage) {
