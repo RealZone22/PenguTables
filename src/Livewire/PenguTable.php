@@ -68,7 +68,37 @@ abstract class PenguTable extends Component
         }
     }
 
+    public function updatedSearch(): void
+    {
+        $this->adjustPageToValidRange();
+    }
+
+    public function updatedActiveFilters(): void
+    {
+        $this->adjustPageToValidRange();
+    }
+
+    protected function adjustPageToValidRange(): void
+    {
+        $query = $this->query();
+        $query = $this->applySearchToQuery($query);
+        $query = $this->applyFilters($query);
+
+        $totalItems = $query->count();
+        $lastPage = max(1, (int)ceil($totalItems / $this->perPage));
+        $currentPage = $this->getPage();
+
+        if ($currentPage > $lastPage) {
+            $this->setPage($lastPage);
+        }
+    }
+
     protected function applySearch(Builder $query): Builder
+    {
+        return $this->applySearchToQuery($query);
+    }
+
+    protected function applySearchToQuery(Builder $query): Builder
     {
         if ($this->options->searchable && $this->search) {
             $searchTerms = array_filter(explode(' ', strtolower(trim($this->search))));
@@ -98,7 +128,7 @@ abstract class PenguTable extends Component
     {
         foreach ($this->filters() as $filter) {
             $value = $this->activeFilters[$filter->key] ?? null;
-            if ($value !== null && $value !== '') {
+            if ($value !== null && $value !== '' && $value !== []) {
                 $filter->apply($query, $value);
             }
         }

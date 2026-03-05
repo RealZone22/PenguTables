@@ -2,11 +2,9 @@
     <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-2">
         <div class="flex gap-4">
             @if($headers)
-                <div>
-                    @foreach($headers as $header)
-                        {!! \Illuminate\Support\Facades\Blade::render($header->getLabel()) !!}
-                    @endforeach
-                </div>
+                @foreach($headers as $header)
+                    {!! \Illuminate\Support\Facades\Blade::render($header->getLabel()) !!}
+                @endforeach
             @endif
         </div>
         <div class="flex gap-2">
@@ -49,7 +47,7 @@
                         </x-button>
                     </x-dropdown.trigger>
 
-                    <x-dropdown.items>
+                    <x-dropdown.items class="!overflow-visible">
                         <div class="p-3 space-y-3">
                             @foreach($this->filters() as $filter)
                                 <div>
@@ -60,6 +58,14 @@
                                                 <option value="{{ $value }}">{{ $label }}</option>
                                             @endforeach
                                         </x-select>
+                                    @elseif($filter->type === 'multi-select')
+                                        <x-select.multiple
+                                            wire:model.live="activeFilters.{{ $filter->key }}"
+                                            :label="$filter->label">
+                                            @foreach($filter->options as $value => $label)
+                                                <option value="{{ $value }}">{{ $label }}</option>
+                                            @endforeach
+                                        </x-select.multiple>
                                     @elseif($filter->type === 'date')
                                         <x-input
                                             wire:model.live="activeFilters.{{ $filter->key }}"
@@ -150,7 +156,7 @@
                     <x-badge size="xs" class="flex items-center">
                         {{ $filter->label }}:
                         @if(is_array($value))
-                            {{ implode(', ', $value) }}
+                            {{ implode(', ', array_map(fn($v) => $filter->options[$v] ?? $v, $value)) }}
                         @else
                             {{ $filter->options[$value] ?? $value }}
                         @endif

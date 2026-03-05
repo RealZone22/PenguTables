@@ -24,6 +24,12 @@ class Options
 
     public string $primaryKey = 'id';
 
+    public bool $cacheEnabled = false;
+
+    public int $cacheDuration = 300;
+
+    public ?string $cacheKeyPrefix = null;
+
     public static function make(): static
     {
         return new static;
@@ -89,6 +95,29 @@ class Options
     public function withLoading(bool $enabled = true): static
     {
         $this->loading = $enabled;
+
+        return $this;
+    }
+
+    public function withCache(bool $enabled = true, int $duration = 300, ?string $keyPrefix = null): static
+    {
+        $this->cacheEnabled = $enabled;
+        $this->cacheDuration = $duration;
+        $this->cacheKeyPrefix = $keyPrefix;
+
+        return $this;
+    }
+
+    public function setCacheDuration(int $seconds): static
+    {
+        $this->cacheDuration = $seconds;
+
+        return $this;
+    }
+
+    public function setCacheKeyPrefix(string $prefix): static
+    {
+        $this->cacheKeyPrefix = $prefix;
 
         return $this;
     }
