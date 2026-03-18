@@ -2,6 +2,14 @@
 
 All notable changes to `PenguTables` will be documented in this file.
 
+## 1.3.0 - 2026-03-05
+
+### What's Changed
+
+* Add caching function by @RealZone22 in https://github.com/RealZone22/PenguTables/pull/28
+
+**Full Changelog**: https://github.com/RealZone22/PenguTables/compare/1.2.3...1.3.0
+
 ## 1.2.3 - 2026-02-09
 
 ### What's Changed

@@ -33,7 +33,7 @@ class MultiSelectFilter extends Filter
 
     public function defaultFilter(Builder $query, $value): void
     {
-        if (!empty($value) && is_array($value)) {
+        if (! empty($value) && is_array($value)) {
             $query->whereIn($this->key, $value);
         }
     }
