@@ -68,7 +68,7 @@ Please adhere to the coding style used in the project. This includes:
 
 ## Additional Resources
 
-- [Project Documentation](https://github.com/RealZone22/PenguTables/wiki)
-- [Issue Tracker](https://github.com/RealZone22/PenguTables/issues)
+- [Project Documentation](https://git.cyanfox.de/RealZone22/PenguTables/wiki)
+- [Issue Tracker](https://git.cyanfox.de/RealZone22/PenguTables/issues)
 
 We are grateful for your contributions and look forward to collaborating with you!
