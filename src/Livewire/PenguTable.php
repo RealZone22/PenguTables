@@ -19,6 +19,8 @@ abstract class PenguTable extends Component
 
     public array $selected = [];
 
+    public array $deselected = [];
+
     #[Url('table-search')]
     public string $search = '';
 
@@ -138,34 +140,72 @@ abstract class PenguTable extends Component
 
     public function updatedSelectAll($value): void
     {
-        if ($value) {
-            $query = $this->applyFilters($this->applySearch($this->query()));
-            $query = $this->applySort($query);
-            $currentPage = $this->getPage();
-            $this->selected = $query
-                ->forPage($currentPage, $this->perPage)
-                ->pluck($this->options->primaryKey)
-                ->map(fn ($id) => (string) $id)
-                ->toArray();
-        } else {
-            $this->selected = [];
+        $this->selected = [];
+        $this->deselected = [];
+    }
+
+    public function toggleSelection(string $id): void
+    {
+        if ($this->selectAll) {
+            if (in_array($id, $this->deselected, true)) {
+                $this->deselected = array_values(array_diff($this->deselected, [$id]));
+            } else {
+                $this->deselected[] = $id;
+            }
+
+            return;
         }
+
+        if (in_array($id, $this->selected, true)) {
+            $this->selected = array_values(array_diff($this->selected, [$id]));
+        } else {
+            $this->selected[] = $id;
+        }
+    }
+
+    protected function filteredQuery(): Builder
+    {
+        return $this->applyFilters($this->applySearch($this->query()));
+    }
+
+    protected function selectedQuery(): Builder
+    {
+        $query = $this->filteredQuery();
+        $primaryKey = $this->options->primaryKey;
+
+        if ($this->selectAll) {
+            return empty($this->deselected)
+                ? $query
+                : $query->whereNotIn($primaryKey, $this->deselected);
+        }
+
+        return $query->whereIn($primaryKey, $this->selected);
+    }
+
+    public function selectedCount(): int
+    {
+        if (! $this->selectAll) {
+            return count($this->selected);
+        }
+
+        return max(0, $this->filteredQuery()->count() - count($this->deselected));
     }
 
     public function executeBulkAction(string $actionLabel): void
     {
         $action = collect($this->bulkActions())->first(fn ($action) => $action->getLabel() === $actionLabel);
-        if ($action && ! empty($this->selected)) {
-            $rows = $this->query()->whereIn($this->options->primaryKey, $this->selected)->get();
+        if ($action && $this->selectedQuery()->exists()) {
+            $rows = $this->selectedQuery()->get();
             $action->execute($rows);
             $this->selected = [];
+            $this->deselected = [];
             $this->selectAll = false;
         }
     }
 
     public function updatedSelected(): void
     {
-        $this->selectAll = false;
+        $this->deselected = [];
     }
 
     public function resetFilters(): void
@@ -234,12 +274,32 @@ abstract class PenguTable extends Component
 
     public function render(): View
     {
-        return view(config('pengutables.table_view'), [
-            'data' => $this->data,
+        return view(config('pengutables.table_view'), $this->tableViewData());
+    }
+
+    public function tableViewData(): array
+    {
+        $data = $this->data;
+        $selectedCount = $this->selectAll
+            ? max(0, $data->total() - count($this->deselected))
+            : count($this->selected);
+
+        return [
+            'data' => $data,
             'columns' => $this->columns,
             'options' => $this->options,
             'headers' => $this->header(),
             'bulkActions' => $this->bulkActions(),
-        ]);
+            'selected' => $this->selected,
+            'deselected' => $this->deselected,
+            'selectAll' => $this->selectAll,
+            'selectedCount' => $selectedCount,
+            'activeFilters' => $this->activeFilters,
+            'search' => $this->search,
+            'perPage' => $this->perPage,
+            'sortField' => $this->sortField,
+            'sortDirection' => $this->sortDirection,
+            'configuration' => $this,
+        ];
     }
 }

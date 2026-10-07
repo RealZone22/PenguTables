@@ -2,6 +2,8 @@
 
 namespace RealZone22\PenguTables;
 
+use Illuminate\Support\Facades\Blade;
+use RealZone22\PenguTables\View\Components\PenguTable;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -14,5 +16,10 @@ class PenguTablesServiceProvider extends PackageServiceProvider
             ->hasConfigFile()
             ->hasTranslations()
             ->hasViews('pengutables');
+    }
+
+    public function packageBooted(): void
+    {
+        Blade::component('pengutable', PenguTable::class);
     }
 }

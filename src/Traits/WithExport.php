@@ -10,9 +10,7 @@ trait WithExport
 {
     public function exportSelected($type)
     {
-        $primaryKey = $this->options->primaryKey ?? 'id';
-
-        return $this->export($this->query()->whereIn($primaryKey, $this->selected)->get(), $type);
+        return $this->exportChunked($this->selectedQuery(), $type);
     }
 
     public function exportAll($type)
