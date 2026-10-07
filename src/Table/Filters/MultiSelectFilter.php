@@ -3,8 +3,10 @@
 namespace RealZone22\PenguTables\Table\Filters;
 
 use Illuminate\Contracts\Database\Eloquent\Builder;
+use JetBrains\PhpStorm\Deprecated;
 use RealZone22\PenguTables\Table\Filter;
 
+#[Deprecated('Only works with the old PenguBlade multi-select')]
 class MultiSelectFilter extends Filter
 {
     public array $options = [];

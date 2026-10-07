@@ -1,6 +1,6 @@
 <div>
     <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-2">
-        <div class="flex gap-4">
+        <div class="flex gap-2">
             @if($headers)
                 @foreach($headers as $header)
                     {!! \Illuminate\Support\Facades\Blade::render($header->getLabel()) !!}
@@ -8,18 +8,18 @@
             @endif
         </div>
         <div class="flex gap-2">
-            @if($options->bulkActions && count($selected) > 0 && count($bulkActions) > 0)
+            @if($options->bulkActions && $selectedCount > 0 && count($bulkActions) > 0)
                 <x-dropdown>
                     <x-dropdown.trigger>
                         <x-button variant="outline">
-                            {!! __('pengutables::tables.bulk_actions', ['count' => count($selected)]) !!}
+                            {!! __('pengutables::tables.bulk_actions', ['count' => $selectedCount]) !!}
                         </x-button>
                     </x-dropdown.trigger>
 
                     <x-dropdown.items>
                         <div class="p-3 border-b border-gray-200 dark:border-neutral-700">
                             <p class="text-sm text-gray-600 dark:text-neutral-400">
-                                {!! __('pengutables::tables.selected_items', ['selected' => count($selected), 'items' => $data->total()]) !!}
+                                {!! __('pengutables::tables.selected_items', ['selected' => $selectedCount, 'items' => $data->total()]) !!}
                             </p>
                         </div>
 
@@ -39,7 +39,7 @@
                 </x-dropdown>
             @endif
 
-            @if(count($this->filters()) > 0)
+            @if(count($configuration->filters()) > 0)
                 <x-dropdown>
                     <x-dropdown.trigger>
                         <x-button variant="outline">
@@ -49,7 +49,7 @@
 
                     <x-dropdown.items class="!overflow-visible">
                         <div class="p-3 space-y-3">
-                            @foreach($this->filters() as $filter)
+                            @foreach($configuration->filters() as $filter)
                                 <div>
                                     @if($filter->type === 'select')
                                         <x-select wire:model.live="activeFilters.{{ $filter->key }}"
@@ -100,7 +100,7 @@
                 <x-dropdown>
                     <x-dropdown.trigger>
                         <x-button variant="outline">
-                            {{ __('pengutables::tables.export') }} {{ count($selected) > 0 ? '(' . count($selected) . ')' : '' }}
+                            {{ __('pengutables::tables.export') }} {{ $selectedCount > 0 ? '(' . $selectedCount . ')' : '' }}
                         </x-button>
                     </x-dropdown.trigger>
 
@@ -148,7 +148,7 @@
 
     @if(count(array_filter($activeFilters ?? [])) > 0)
         <div class="mb-2 flex flex-wrap gap-2 items-center">
-            @foreach($this->filters() as $filter)
+            @foreach($configuration->filters() as $filter)
                 @php
                     $value = $activeFilters[$filter->key] ?? null;
                 @endphp
@@ -176,7 +176,10 @@
             <x-table.header>
                 @if($options->bulkActions)
                     <x-table.header.item class="py-1 px-3 pe-0">
-                        <x-checkbox wire:model.live="selectAll"/>
+                        <x-checkbox
+                            wire:model.live="selectAll"
+                            :checked="$selectAll"
+                        />
                     </x-table.header.item>
                 @endif
 
@@ -212,8 +215,11 @@
                         @if($options->bulkActions)
                             <x-table.body.item class="py-3 ps-3">
                                 <x-checkbox
-                                    wire:model.live="selected"
+                                    wire:click="toggleSelection('{{ (string) $item->{$options->primaryKey} }}')"
                                     value="{{ (string)$item->{$options->primaryKey} }}"
+                                    :checked="$selectAll
+                                        ? ! in_array((string) $item->{$options->primaryKey}, $deselected, true)
+                                        : in_array((string) $item->{$options->primaryKey}, $selected, true)"
                                 />
                             </x-table.body.item>
                         @endif
