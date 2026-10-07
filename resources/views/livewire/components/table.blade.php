@@ -175,7 +175,7 @@
         <x-table>
             <x-table.header>
                 @if($options->bulkActions)
-                    <x-table.header.item class="py-1 px-3 pe-0">
+                    <x-table.header.item>
                         <x-checkbox
                             wire:model.live="selectAll"
                             :checked="$selectAll"
@@ -183,16 +183,16 @@
                     </x-table.header.item>
                 @endif
 
-                    @foreach($columns as $column)
-                        @unless($column->hidden)
-                            <x-table.header.item class="py-1 px-2.5 text-sm">
-                                @if($column->sortable)
-                                    <button
-                                        type="button"
-                                        class="flex items-center cursor-pointer py-1 gap-1 w-full"
-                                        wire:click="sort('{{ $column->key }}')">
-                                        <span class="whitespace-nowrap">{{ $column->label }}</span>
-                                        <i class="
+                @foreach($columns as $column)
+                    @unless($column->hidden)
+                        <x-table.header.item>
+                            @if($column->sortable)
+                                <button
+                                    type="button"
+                                    class="flex items-center cursor-pointer gap-1 w-full"
+                                    wire:click="sort('{{ $column->key }}')">
+                                    <span class="whitespace-nowrap">{{ $column->label }}</span>
+                                    <i class="
                                             @if($sortField === $column->key)
                                                 icon-chevron-{{ $sortDirection === 'desc' ? 'up' : 'down' }}
                                             @else
@@ -200,20 +200,20 @@
                                             @endif
                                             text-xs
                                         "></i>
-                                    </button>
-                                @else
-                                    <div class="w-full whitespace-nowrap">{{ $column->label }}</div>
-                                @endif
-                            </x-table.header.item>
-                        @endunless
-                    @endforeach
+                                </button>
+                            @else
+                                <div class="w-full whitespace-nowrap">{{ $column->label }}</div>
+                            @endif
+                        </x-table.header.item>
+                    @endunless
+                @endforeach
             </x-table.header>
 
             <x-table.body>
                 @forelse($data as $item)
                     <x-table.body.row wire:key="row-{{ $item->{$options->primaryKey} }}">
                         @if($options->bulkActions)
-                            <x-table.body.item class="py-3 ps-3">
+                            <x-table.body.item>
                                 <x-checkbox
                                     wire:click="toggleSelection('{{ (string) $item->{$options->primaryKey} }}')"
                                     value="{{ (string)$item->{$options->primaryKey} }}"
@@ -235,7 +235,7 @@
                 @empty
                     <x-table.body.row>
                         <x-table.body.item colspan="{{ count($columns) + ($options->bulkActions ? 1 : 0) }}"
-                                           class="p-3 pt-8 text-center">
+                                           class="py-6 text-center">
                             {!! __('pengutables::tables.no_results') !!}
                         </x-table.body.item>
                     </x-table.body.row>
