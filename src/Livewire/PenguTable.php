@@ -108,14 +108,12 @@ abstract class PenguTable extends Component
             if (! empty($searchTerms)) {
                 $query->where(function (Builder $subQuery) use ($searchTerms) {
                     $searchableColumns = collect($this->columns)
-                        ->filter(fn ($column) => $column->searchable && $column->key)
-                        ->pluck('key')
-                        ->toArray();
+                        ->filter(fn ($column) => $column->searchable && ($column->key || $column->hasCustomSearch()));
 
                     foreach ($searchTerms as $term) {
                         $subQuery->where(function (Builder $termQuery) use ($term, $searchableColumns) {
                             foreach ($searchableColumns as $column) {
-                                $termQuery->orWhere($column, 'LIKE', '%'.$term.'%');
+                                $column->applySearch($termQuery, $term);
                             }
                         });
                     }
@@ -225,8 +223,10 @@ abstract class PenguTable extends Component
 
     protected function applySort(Builder $query): Builder
     {
-        if ($this->sortField) {
-            $query->orderBy($this->sortField, $this->sortDirection);
+        if ($this->sortField && collect($this->columns)->contains(
+            fn ($column) => $column->sortable && $column->key === $this->sortField
+        )) {
+            $query->reorder($this->sortField, $this->sortDirection);
         }
 
         return $query;

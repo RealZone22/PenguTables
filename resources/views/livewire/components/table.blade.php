@@ -8,6 +8,12 @@
             @endif
         </div>
         <div class="flex gap-2">
+            @if($options->loading)
+                <div class="flex items-center">
+                    <x-spinner wire:loading/>
+                </div>
+            @endif
+
             @if($options->bulkActions && $selectedCount > 0 && count($bulkActions) > 0)
                 <x-dropdown>
                     <x-dropdown.trigger>
@@ -17,23 +23,25 @@
                     </x-dropdown.trigger>
 
                     <x-dropdown.items>
-                        <div class="p-3 border-b border-gray-200 dark:border-neutral-700">
-                            <p class="text-sm text-gray-600 dark:text-neutral-400">
+                        <div class="p-3">
+                            <p class="text-sm text-on-surface/50 dark:text-on-surface-dark/50">
                                 {!! __('pengutables::tables.selected_items', ['selected' => $selectedCount, 'items' => $data->total()]) !!}
                             </p>
-                        </div>
 
-                        <div class="p-2 flex flex-col gap-1">
-                            @foreach($bulkActions as $action)
-                                <x-button
-                                    variant="soft"
-                                    color="secondary"
-                                    class="w-full"
-                                    wire:click="executeBulkAction('{{ $action->getLabel() }}')"
-                                >
-                                    {{ $action->getLabel() }}
-                                </x-button>
-                            @endforeach
+                            <x-divider/>
+
+                            <div class="flex flex-col gap-1">
+                                @foreach($bulkActions as $action)
+                                    <x-button
+                                        variant="soft"
+                                        color="secondary"
+                                        class="w-full"
+                                        wire:click="executeBulkAction('{{ $action->getLabel() }}')"
+                                    >
+                                        {{ $action->getLabel() }}
+                                    </x-button>
+                                @endforeach
+                            </div>
                         </div>
                     </x-dropdown.items>
                 </x-dropdown>
@@ -79,9 +87,9 @@
                                     @endif
                                 </div>
                             @endforeach
-                        </div>
 
-                        <div class="border-t border-gray-200 dark:border-neutral-700 p-3">
+                            <x-divider/>
+
                             <x-button
                                 class="w-full"
                                 wire:click="resetFilters"
@@ -137,10 +145,6 @@
                             leading-icon="search"
                         />
                     </div>
-
-                    @if($options->loading)
-                        <x-spinner wire:loading/>
-                    @endif
                 </div>
             @endif
         </div>

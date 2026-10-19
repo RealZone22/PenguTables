@@ -3,6 +3,7 @@
 namespace RealZone22\PenguTables\Table;
 
 use Closure;
+use Illuminate\Database\Eloquent\Builder;
 use Laravel\SerializableClosure\SerializableClosure;
 use Livewire\Wireable;
 
@@ -25,6 +26,8 @@ class Column implements Wireable
     private ?string $formatSerialized = null;
 
     private ?Closure $format = null;
+
+    private ?string $searchSerialized = null;
 
     private function __construct(string $label, ?string $key = null)
     {
@@ -69,6 +72,42 @@ class Column implements Wireable
         $this->searchable = $searchable;
 
         return $this;
+    }
+
+    public function searchUsing(Closure $callback): static
+    {
+        $this->searchSerialized = serialize(new SerializableClosure($callback));
+
+        return $this;
+    }
+
+    public function hasCustomSearch(): bool
+    {
+        return $this->searchSerialized !== null;
+    }
+
+    public function applySearch(Builder $query, string $term): void
+    {
+        if ($this->searchSerialized) {
+            $callback = unserialize($this->searchSerialized)->getClosure();
+            $callback($query, $term);
+
+            return;
+        }
+
+        if (! $this->key) {
+            return;
+        }
+
+        $value = '%'.$term.'%';
+        $segments = explode('.', $this->key);
+        $column = array_pop($segments);
+
+        if ($segments !== []) {
+            $query->orWhereHas(implode('.', $segments), fn (Builder $relationQuery) => $relationQuery->where($column, 'LIKE', $value));
+        } else {
+            $query->orWhere($this->key, 'LIKE', $value);
+        }
     }
 
     public function format(Closure $callback): static
@@ -144,6 +183,7 @@ class Column implements Wireable
             'hideInExport' => $this->hideInExport,
             'html' => $this->html,
             'formatSerialized' => $this->formatSerialized,
+            'searchSerialized' => $this->searchSerialized,
         ];
     }
 
@@ -156,6 +196,7 @@ class Column implements Wireable
         $instance->hideInExport = $value['hideInExport'] ?? true;
         $instance->html = $value['html'];
         $instance->formatSerialized = $value['formatSerialized'];
+        $instance->searchSerialized = $value['searchSerialized'] ?? null;
 
         return $instance;
     }
