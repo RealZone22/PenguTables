@@ -2,6 +2,8 @@
 
 namespace RealZone22\PenguTables\Traits;
 
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 use OpenSpout\Common\Entity\Row;
 use OpenSpout\Writer\CSV\Writer as CsvWriter;
 use OpenSpout\Writer\XLSX\Writer as XlsxWriter;
@@ -10,14 +12,50 @@ trait WithExport
 {
     public function exportSelected($type)
     {
-        return $this->exportChunked($this->selectedQuery(), $type);
+        return $this->queueExport($type, true);
     }
 
     public function exportAll($type)
     {
-        $query = $this->applyFilters($this->applySearch($this->query()));
+        return $this->queueExport($type, false);
+    }
+
+    public function exportFromState(array $state, string $type)
+    {
+        $selectedExport = $state['selectedExport'] ?? false;
+        unset($state['selectedExport']);
+
+        foreach ($state as $property => $value) {
+            $this->{$property} = $value;
+        }
+
+        $query = $selectedExport
+            ? $this->selectedQuery()
+            : $this->applyFilters($this->applySearch($this->query()));
 
         return $this->exportChunked($query, $type);
+    }
+
+    protected function queueExport(string $type, bool $selected)
+    {
+        abort_unless(in_array($type, ['csv_all', 'xlsx_all', 'csv_selected', 'xlsx_selected'], true), 404);
+
+        $token = Str::random(64);
+        Cache::put('pengutables.export.'.$token, [
+            'component' => $this->getName() ?: static::class,
+            'componentIsNamed' => $this->getName() !== null,
+            'state' => [
+                'search' => $this->search,
+                'activeFilters' => $this->activeFilters,
+                'selected' => $selected ? $this->selected : [],
+                'deselected' => $selected ? $this->deselected : [],
+                'selectAll' => $selected && $this->selectAll,
+                'selectedExport' => $selected,
+            ],
+            'type' => $type,
+        ], now()->addSeconds(config('pengutables.export_token_ttl', 60)));
+
+        return redirect()->route(config('pengutables.export_route', 'pengutables.export'), $token);
     }
 
     protected function export($data, $type)
@@ -58,7 +96,8 @@ trait WithExport
     {
         $writer = new CsvWriter;
 
-        return response()->stream(function () use ($writer, $headers, $rows) {
+        return response()->streamDownload(function () use ($writer, $headers, $rows) {
+            $this->clearExportOutputBuffers();
             $writer->openToFile('php://output');
 
             $writer->addRow(Row::fromValues($headers));
@@ -68,9 +107,8 @@ trait WithExport
             }
 
             $writer->close();
-        }, 200, [
+        }, $filename.'.csv', [
             'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename="'.$filename.'.csv"',
             'Pragma' => 'no-cache',
             'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
             'Expires' => '0',
@@ -81,24 +119,25 @@ trait WithExport
     {
         $writer = new CsvWriter;
 
-        return response()->stream(function () use ($writer, $headers, $query, $exportColumns) {
+        return response()->streamDownload(function () use ($writer, $headers, $query, $exportColumns) {
+            $this->clearExportOutputBuffers();
             $writer->openToFile('php://output');
             $writer->addRow(Row::fromValues($headers));
 
-            $query->chunk(1000, function ($items) use ($writer, $exportColumns) {
+            $query->chunkById(1000, function ($items) use ($writer, $exportColumns) {
                 foreach ($items as $item) {
-                    $rowData = collect($exportColumns)->map(function ($column) use ($item) {
-                        return strip_tags($column->getValue($item));
-                    })->toArray();
+                    $rowData = [];
+                    foreach ($exportColumns as $column) {
+                        $rowData[] = strip_tags($column->getValue($item));
+                    }
 
                     $writer->addRow(Row::fromValues($rowData));
                 }
-            });
+            }, $this->options->primaryKey);
 
             $writer->close();
-        }, 200, [
+        }, $filename.'.csv', [
             'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename="'.$filename.'.csv"',
             'Pragma' => 'no-cache',
             'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
             'Expires' => '0',
@@ -109,7 +148,8 @@ trait WithExport
     {
         $writer = new XlsxWriter;
 
-        return response()->stream(function () use ($writer, $headers, $rows) {
+        return response()->streamDownload(function () use ($writer, $headers, $rows) {
+            $this->clearExportOutputBuffers();
             $writer->openToFile('php://output');
 
             $headerRow = Row::fromValues($headers);
@@ -120,9 +160,8 @@ trait WithExport
             }
 
             $writer->close();
-        }, 200, [
+        }, $filename.'.xlsx', [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'Content-Disposition' => 'attachment; filename="'.$filename.'.xlsx"',
             'Pragma' => 'no-cache',
             'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
             'Expires' => '0',
@@ -133,29 +172,37 @@ trait WithExport
     {
         $writer = new XlsxWriter;
 
-        return response()->stream(function () use ($writer, $headers, $query, $exportColumns) {
+        return response()->streamDownload(function () use ($writer, $headers, $query, $exportColumns) {
+            $this->clearExportOutputBuffers();
             $writer->openToFile('php://output');
 
             $headerRow = Row::fromValues($headers);
             $writer->addRow($headerRow);
 
-            $query->chunk(1000, function ($items) use ($writer, $exportColumns) {
+            $query->chunkById(1000, function ($items) use ($writer, $exportColumns) {
                 foreach ($items as $item) {
-                    $rowData = collect($exportColumns)->map(function ($column) use ($item) {
-                        return strip_tags($column->getValue($item));
-                    })->toArray();
+                    $rowData = [];
+                    foreach ($exportColumns as $column) {
+                        $rowData[] = strip_tags($column->getValue($item));
+                    }
 
                     $writer->addRow(Row::fromValues($rowData));
                 }
-            });
+            }, $this->options->primaryKey);
 
             $writer->close();
-        }, 200, [
+        }, $filename.'.xlsx', [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'Content-Disposition' => 'attachment; filename="'.$filename.'.xlsx"',
             'Pragma' => 'no-cache',
             'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
             'Expires' => '0',
         ]);
+    }
+
+    protected function clearExportOutputBuffers(): void
+    {
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
     }
 }

@@ -27,6 +27,8 @@ class Column implements Wireable
 
     private ?Closure $format = null;
 
+    private ?Closure $resolvedFormat = null;
+
     private ?string $searchSerialized = null;
 
     private function __construct(string $label, ?string $key = null)
@@ -113,6 +115,7 @@ class Column implements Wireable
     public function format(Closure $callback): static
     {
         $this->format = $callback;
+        $this->resolvedFormat = $callback;
         $this->formatSerialized = serialize(new SerializableClosure($callback));
 
         return $this;
@@ -149,8 +152,8 @@ class Column implements Wireable
     public function getValue($model): ?string
     {
         if ($this->formatSerialized) {
-            $callback = unserialize($this->formatSerialized)->getClosure();
-            $value = $callback(data_get($model, $this->key), $model);
+            $this->resolvedFormat ??= unserialize($this->formatSerialized)->getClosure();
+            $value = ($this->resolvedFormat)(data_get($model, $this->key), $model);
 
             if (! $this->html) {
                 $value = e($value);
